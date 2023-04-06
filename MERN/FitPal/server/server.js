@@ -1,11 +1,25 @@
 const express = require('express')
+const mongoose = require('mongoose')
+require('dotenv').config()
 
 const app = express()
 const port = process.env.PORT || 4000
+const uri = process.env.ATLAS_URI
 
 const workoutRoutes = require('./routes/workouts')
 
-require('dotenv').config()
+//parse req body to json
+app.use(express.json())
+
+mongoose.connect(uri)
+.then(() => {
+    app.listen(port, () => {
+        console.log(`Connection to MongoDB successful. Listening on port: ${port}`)
+    })
+})
+.catch((error) => {
+    console.log(error)
+})
 
 //middleware
 app.use((req, res, next) => {
@@ -13,12 +27,5 @@ app.use((req, res, next) => {
     next()
 })
 
-//parse req body to json
-app.use(express.json())
-
 //grabs all routes from diffent routers
 app.use('/api/workouts', workoutRoutes)
-
-app.listen(port, () => {
-    console.log('Listening on port 4000')
-})
