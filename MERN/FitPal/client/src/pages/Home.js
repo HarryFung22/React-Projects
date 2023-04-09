@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import WorkoutDetails from '../components/WorkoutDetails'
+import WorkoutForm from '../components/WorkoutForm'
+import {useWorkoutsContext} from '../hooks/useWorkoutsContext'
 
 const Home = () => {
-    const [workouts, setWorkouts] = useState(null)
-
+    //access global state of all workouts
+    const {workouts, dispatch} = useWorkoutsContext()
     useEffect(() => {
         const fetchWorkouts = async () => {
             const response = await fetch('http://localhost:4000/api/workouts')
@@ -11,12 +13,13 @@ const Home = () => {
 
             //response returns an array of workouts
             if(response.ok){
-                setWorkouts(json)
+                dispatch({type: 'SET_WORKOUTS', payload: json})
             }
         }
 
         fetchWorkouts()
-    }, [])
+    //add dispatch into dependency array to ensure function is re-ran after dependecy/state has changed
+    }, [dispatch])
 
     return(
         <div className="home">
@@ -24,10 +27,10 @@ const Home = () => {
                 {workouts && workouts.map((workout) => {
                     return(
                         <WorkoutDetails key={workout._id} workout={workout}/>
-                        
                     )
                 })}
             </div>
+            <WorkoutForm />
         </div>
     )
 }
