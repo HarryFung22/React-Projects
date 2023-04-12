@@ -6,9 +6,11 @@ require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 4000
 const uri = process.env.ATLAS_URI
-const api = process.env.API
+const workoutAPI = process.env.API_WORKOUT
+const userAPI = process.env.API_USER
 
 const workoutRoutes = require('./routes/workouts')
+const userRoutes = require('./routes/user')
 
 //parse req body to json
 app.use(express.json());
@@ -25,11 +27,6 @@ mongoose.connect(uri)
     console.log(error)
 })
 
-//middleware
-app.use((req, res, next) => {
-    console.log(res.path, req.method)
-    next()
-})
-
-//grabs all routes from diffent routers
-app.use(api, workoutRoutes)
+//grabs all routes from diffent routers (both workouts and users)
+app.use(workoutAPI, workoutRoutes)
+app.use(userAPI, userRoutes)
