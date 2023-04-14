@@ -4,6 +4,11 @@ const router = express.Router()
 //import controllers, dereference object to get individual functions for each CRUD operation
 const { createWorkout, getWorkouts, getWorkout, deleteWorkout, updateWorkout } = require('../controllers/workoutController')
 
+const requireAuth = require('../middleware/requireAuth')
+
+//runs middleware function before all other functions
+router.use(requireAuth)
+
 //returns all workouts
 router.get('/', getWorkouts)
 
