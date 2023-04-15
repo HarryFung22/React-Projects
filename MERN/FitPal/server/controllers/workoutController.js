@@ -4,8 +4,11 @@ const Workout = require('../models/WorkoutModel.js')
 
 //get all workouts
 const getWorkouts = async (req, res) => {
-    //leave object blank to return all workouts, sort by descending order (-1)
-    const workouts = await Workout.find({}).sort({createdAt: -1})
+    //grab user id to only fetch docs assigned to that user
+    const user_id = req.user._id
+
+    //leave object blank + specify id to only retrieve workouts created by that user, sort by descending order (-1)
+    const workouts = await Workout.find({user_id}).sort({createdAt: -1})
     res.status(200).json(workouts)
 }
 
@@ -45,7 +48,11 @@ const createWorkout = async (req, res) => {
     }
 
     try{
-        const workout = await Workout.create({title, load, reps})
+        //grabbing user id from middleware
+        const user_id = req.user._id
+
+        //assign every workout with the user id, only able to fetch workouts created by that user
+        const workout = await Workout.create({title, load, reps, user_id})
         res.status(200).json(workout)
     }catch(error){
         res.status(400).json({error: error.message})
