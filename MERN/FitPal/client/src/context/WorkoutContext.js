@@ -22,6 +22,10 @@ export const workoutsReducer = (state, action) => {
                 //filter through current workout state, keeps workouts that aren't the same id as the deleted workout (i.e the payload passed in)
                 workouts: state.workouts.filter((w) => w._id !== action.payload._id)
             }
+        case 'SET_ID':
+            return {
+                workoutID: action.payload
+            }
         default:
             return state
     }
@@ -36,7 +40,8 @@ export const WorkoutsContextProvider = ({children}) => {
     //state represents global state, dispatch is funciton to change state
     //useReducer hook takes in two args, reducer func name + initial state val
     const [state, dispatch] = useReducer(workoutsReducer, {
-        workouts: null
+        workouts: null, 
+        workoutID: null
     })
     return (
         //the specified value represents an object that can be used within any component to access the state of the workouts (an array of workouts objects)

@@ -80,15 +80,33 @@ const updateWorkout = async (req, res) => {
     if(!mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).json({error: 'No such workout'})
     }
-    //pass two properties, id and updated body (title, load, reps)
-    const workout = await Workout.findOneAndUpdate({_id: id}, {
-        //destructure properties from object to get updated info from each field
-        ...req.body
-    })
-    if(!workout){
-        return res.status(404).json({error: 'Workout not found'})
+
+    //verify every field is filled out
+    const {title, load, reps} = req.body
+    let emptyFields = []
+    if(!title){
+        emptyFields.push('title')
     }
-    res.status(200).json(workout)
+    if(!load){
+        emptyFields.push('load')
+    }
+    if(!reps){
+        emptyFields.push('reps')
+    }
+    if(emptyFields.length > 0){
+        return res.status(400).json({error: 'Please fill in all the fields', emptyFields})
+    }
+
+    try{
+        //pass two properties, id and updated body (title, load, reps)
+        const workout = await Workout.findOneAndUpdate({_id: id}, {
+            //destructure properties from object to get updated info from each field
+            ...req.body
+        })
+        res.status(200).json(workout)
+    }catch(error){
+        res.status(404).json({error: error.message})
+    }
 }
 
 //exporting each function as part of an object's properties
