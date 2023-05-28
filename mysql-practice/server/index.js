@@ -44,6 +44,28 @@ app.post("/books", (req, res) => {
     })
 })
 
+app.delete("/books/:id", (req, res) => {
+    //params looks at url id 
+    const id = req.params.id
+    const q = `DELETE FROM books WHERE id = ${id}`
+    db.query(q, (err,data) => {
+        if (err) return res.json(err);
+        return res.json("Book has been deleted")
+    })
+})
+
+app.patch("/books/:id", (req, res) => {
+    //params looks at url id 
+    const id = req.params.id
+    const q = "UPDATE books SET `title`= ?, `desc` = ?, `price` = ?, `cover` = ? WHERE id = ?"
+    const values = [req.body.title, req.body.desc, req.body.price, req.body.cover]
+    //spread out each individual value, then add id as last params
+    db.query(q, [...values, id], (err,data) => {
+        if (err) return res.json(err);
+        return res.json("Book has been deleted")
+    })
+})
+
 app.listen(port, () => {
     console.log("Connection to server Sucessfull")
 })
